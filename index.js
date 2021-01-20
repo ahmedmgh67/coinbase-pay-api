@@ -5,9 +5,9 @@ var app = express();
 var Client = require("coinbase").Client;
 
 var client = new Client({
-  apiKey: "", // You can get this from your Coinbase account
-  apiSecret: "", // You can get this from your Coinbase account
-  version: "", // You can get this from your Coinbase account
+  apiKey: "aAQKlFBGH36NqP2R", // You can get this from your Coinbase account
+  apiSecret: "Eza8jtzauO1ta6qGUdR8hi4K88Kmz5Q9", // You can get this from your Coinbase account
+  version: "2018-04-28", // You can get this from your Coinbase account
 });
 
 //This is what you have to complete to get this project, if you qualify this, you are elegiblefor the project
@@ -18,8 +18,7 @@ var client = new Client({
 //https://developers.coinbase.com/api/v2#introduction
 //https://developers.coinbase.com/docs/wallet/guides/send-receive
 
-app.post("/paycrypto", function (req, res) {
-  client.getAccount("primary", function (err, account) {
+app.post("/paycrypto/:email/:amount/:currency", function (req, res) {
     client.getAccount("primary", function (err, account) {
       account.sendMoney(
         {
@@ -29,10 +28,14 @@ app.post("/paycrypto", function (req, res) {
         },
         function (err, tx) {
           console.log(tx);
-          //complete the response
+          if(err){
+            res.status(400).json({"status":"error", "err":err});
+            return;
+          }
+          res.json({"status":"success","tx":tx});
+          return
         }
       );
-    });
   });
 });
 app.listen(port, function () {
